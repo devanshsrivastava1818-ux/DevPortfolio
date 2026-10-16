@@ -5,3 +5,5 @@ node_modules/
 .DS_Store
 dist/
 build/
+client/src/App.backup.jsx
+client/src/index.backup.css

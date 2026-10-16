@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -10,43 +11,101 @@ import {
   Menu,
   X,
   Sun,
-  Moon
+  Moon,
+  GitBranch,
+  Sparkles,
+  GraduationCap,
+  Layers3,
+  Send,
 } from "lucide-react";
-
 import "./index.css";
+import devAvatar from "./assets/dev-avatar.png";
 
 const projects = [
   {
+    number: "01",
     title: "PhishScan",
-    category: "Machine Learning",
+    category: "MACHINE LEARNING",
     description:
-      "An ML-powered phishing URL detector that classifies URLs and displays risk scores.",
+      "An ML-powered phishing URL detection system that classifies suspicious links and presents risk scores.",
     tech: ["Python", "Scikit-learn", "Flask"],
-    link: "https://github.com/"
+    link: "https://github.com/",
   },
   {
+    number: "02",
     title: "SchemeAssist",
-    category: "AI / Web Development",
+    category: "AI / WEB DEVELOPMENT",
     description:
-      "A government scheme discovery platform designed to help people find relevant schemes.",
+      "A government scheme discovery concept designed to help people explore schemes relevant to their needs.",
     tech: ["React", "JavaScript", "AI"],
-    link: "https://github.com/"
+    link: "https://github.com/",
   },
   {
+    number: "03",
     title: "Smart Ride Sharing",
-    category: "Database",
+    category: "DATABASE SYSTEMS",
     description:
-      "A database-driven transportation management system for coordinating shared rides.",
+      "A database-driven transportation management system for coordinating shared rides and organizing records.",
     tech: ["SQL", "DBMS", "Database Design"],
-    link: "https://github.com/"
-  }
+    link: "https://github.com/",
+  },
 ];
 
-const skills = {
-  Frontend: ["HTML", "CSS", "JavaScript", "React"],
-  Backend: ["Node.js", "Express.js", "REST APIs"],
-  "Tools & Technologies": ["Git", "GitHub", "MongoDB", "Python"]
+const skills = [
+  {
+    title: "Frontend",
+    icon: Code2,
+    description: "Building clean and responsive interfaces.",
+    items: ["HTML", "CSS", "JavaScript", "React"],
+  },
+  {
+    title: "Backend",
+    icon: Database,
+    description: "Connecting interfaces with data and APIs.",
+    items: ["Node.js", "Express.js", "REST APIs", "MongoDB"],
+  },
+  {
+    title: "Tools & Learning",
+    icon: Terminal,
+    description: "Exploring tools to build practical solutions.",
+    items: ["Git & GitHub", "Python", "Machine Learning", "SQL"],
+  },
+];
+
+const navigation = [
+  ["About", "#about"],
+  ["Skills", "#skills"],
+  ["Projects", "#projects"],
+  ["Education", "#education"],
+  ["Contact", "#contact"],
+];
+
+const reveal = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.65, ease: "easeOut" },
+  },
 };
+
+function SectionHeading({ eyebrow, title, accent, description }) {
+  return (
+    <motion.div
+      className="section-heading"
+      variants={reveal}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.25 }}
+    >
+      <p className="eyebrow">{eyebrow}</p>
+      <h2>
+        {title} <span>{accent}</span>
+      </h2>
+      {description && <p className="muted">{description}</p>}
+    </motion.div>
+  );
+}
 
 export default function App() {
   const [dark, setDark] = useState(true);
@@ -54,13 +113,15 @@ export default function App() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    message: ""
+    message: "",
   });
   const [status, setStatus] = useState("");
+  const [sending, setSending] = useState(false);
 
   async function submitContact(e) {
     e.preventDefault();
-    setStatus("Sending...");
+    setSending(true);
+    setStatus("Sending your message...");
 
     try {
       const response = await fetch(
@@ -68,7 +129,7 @@ export default function App() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form)
+          body: JSON.stringify(form),
         }
       );
 
@@ -80,53 +141,51 @@ export default function App() {
 
       setStatus(data.message || "Message sent successfully!");
       setForm({ name: "", email: "", message: "" });
-    } catch {
+    } catch (error) {
       setStatus(
-        "Unable to send. Check that the backend is running on port 5001."
+        error.message === "Failed to fetch"
+          ? "Unable to connect. Please try again in a moment."
+          : error.message || "Unable to send your message."
       );
+    } finally {
+      setSending(false);
     }
   }
-
-  const nav = [
-    ["About", "#about"],
-    ["Skills", "#skills"],
-    ["Projects", "#projects"],
-    ["Education", "#education"],
-    ["Contact", "#contact"]
-  ];
 
   return (
     <div className={dark ? "site dark" : "site light"}>
       <header className="navbar">
-        <a className="brand" href="#home">
-          DS<span>.</span>
+        <a className="brand" href="#home" aria-label="Devansh home">
+          d<span>.</span>
         </a>
 
         <nav className={menu ? "nav-links open" : "nav-links"}>
-          {nav.map(([name, href]) => (
-            <a key={name} href={href} onClick={() => setMenu(false)}>
-              {name}
+          {navigation.map(([label, href]) => (
+            <a key={label} href={href} onClick={() => setMenu(false)}>
+              {label}
             </a>
           ))}
         </nav>
 
         <div className="nav-actions">
           <button
-            className="icon-btn"
-            onClick={() => setDark(!dark)}
-            aria-label="Toggle theme"
+            className="icon-btn theme-toggle"
+            onClick={() => setDark((value) => !value)}
+            aria-label="Toggle color theme"
+            title="Toggle theme"
           >
-            {dark ? <Sun size={19} /> : <Moon size={19} />}
+            {dark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          <a href="#contact" className="small-cta">
+          <a className="small-cta" href="#contact">
             Let's talk <ArrowUpRight size={15} />
           </a>
 
           <button
             className="icon-btn mobile-menu"
-            onClick={() => setMenu(!menu)}
+            onClick={() => setMenu((value) => !value)}
             aria-label="Toggle navigation"
+            aria-expanded={menu}
           >
             {menu ? <X /> : <Menu />}
           </button>
@@ -135,121 +194,209 @@ export default function App() {
 
       <main>
         <section className="hero section" id="home">
-          <motion.div
-            className="hero-copy"
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="availability">
-              <span /> COMPUTER SCIENCE STUDENT
-            </div>
+          <div className="hero-copy">
+            <motion.div
+              className="availability"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="availability-dot" />
+              COMPUTER SCIENCE STUDENT
+            </motion.div>
 
-            <p className="eyebrow">HELLO, I'M</p>
-            <h1>
-              Devansh
+            <motion.p
+              className="eyebrow hero-eyebrow"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              HELLO, I'M DEVANSH
+            </motion.p>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.75, delay: 0.1 }}
+            >
+              Ideas into
               <br />
-              <span>Srivastava.</span>
-            </h1>
+              <span>digital craft.</span>
+            </motion.h1>
 
-            <h2>
-              Building ideas into <span>digital experiences.</span>
-            </h2>
+            <motion.h2
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+            >
+              I'm Devansh Srivastava.
+            </motion.h2>
 
-            <p className="hero-description">
-              I'm a CSE student exploring web development, machine learning
-              and practical technology solutions.
-            </p>
+            <motion.p
+              className="hero-description"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.7, delay: 0.35 }}
+            >
+              A CSE student at JK Lakshmipat University, exploring web
+              development, machine learning, and useful solutions to real-world
+              problems.
+            </motion.p>
 
-            <div className="hero-buttons">
+            <motion.div
+              className="hero-buttons"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
               <a href="#projects" className="primary-btn">
                 Explore my work <ArrowUpRight size={17} />
               </a>
               <a href="#contact" className="secondary-btn">
                 Get in touch
               </a>
-            </div>
+            </motion.div>
 
-            <div className="socials">
+            <motion.div
+              className="socials"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
               <a
                 href="https://github.com/"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
               >
-                <Code2 />
+                <GitBranch size={19} />
               </a>
-
               <a
                 href="https://linkedin.com/"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
               >
-                <Code2 />
+                <Code2 size={19} />
               </a>
-
-              <a href="#contact" aria-label="Email">
-                <Mail />
+              <a href="#contact" aria-label="Contact">
+                <Mail size={19} />
               </a>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
           <motion.div
             className="hero-visual"
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.94 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.9, delay: 0.2 }}
           >
-            <div className="orb">
-              <Code2 size={92} strokeWidth={1} />
-            </div>
-            <div className="floating-card card-one">
-              <Code2 size={18} /> Full Stack Development
-            </div>
-            <div className="floating-card card-two">
-              <Database size={18} /> Machine Learning
-            </div>
-            <div className="visual-caption">
-              Curious mind. Practical solutions.
-            </div>
+            <div className="visual-grid" />
+            <motion.div
+              className="orbit orbit-one"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className="orbit orbit-two"
+              animate={{ rotate: -360 }}
+              transition={{ duration: 42, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className="hero-photo-frame"
+              animate={{ y: [0, -7, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <div className="hero-photo-glow" />
+              <img
+                className="hero-avatar"
+                src={devAvatar}
+                alt="Illustrated portrait of Devansh Srivastava"
+              />
+              <div className="hero-photo-shine" />
+            </motion.div>
+
+            <motion.div
+              className="floating-card card-one"
+              animate={{ y: [0, -6, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Code2 size={17} />
+              <span>
+                <strong>Web development</strong>
+                <small>Building for the web</small>
+              </span>
+            </motion.div>
+
+            <motion.div
+              className="floating-card card-two"
+              animate={{ y: [0, 6, 0] }}
+              transition={{
+                duration: 4.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <Database size={17} />
+              <span>
+                <strong>Machine learning</strong>
+                <small>Curiosity into projects</small>
+              </span>
+            </motion.div>
+
+            <span className="visual-caption">
+              CURIOUS MIND. PRACTICAL SOLUTIONS.
+            </span>
           </motion.div>
+
+          <a className="scroll-cue" href="#about">
+            <span /> SCROLL TO EXPLORE
+          </a>
         </section>
 
         <section className="section about" id="about">
-          <div className="section-heading">
-            <p className="eyebrow">A LITTLE ABOUT ME</p>
-            <h2>
-              Turning curiosity into <span>creation.</span>
-            </h2>
-          </div>
+          <SectionHeading
+            eyebrow="A LITTLE ABOUT ME"
+            title="Curiosity meets"
+            accent="creation."
+          />
 
-          <div className="about-grid">
+          <motion.div
+            className="about-grid"
+            variants={reveal}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
             <div className="about-mark">
-              DS<span>.</span>
+              <img
+                className="about-avatar"
+                src={devAvatar}
+                alt="Devansh's illustrated avatar"
+              />
+              <div className="about-mark-caption">STUDENT · BUILDER · LEARNER</div>
             </div>
 
-            <div>
+            <div className="about-copy">
               <p className="large-copy">
-                I'm Devansh, a Computer Science and Engineering student at
-                JK Lakshmipat University, Jaipur.
+                I like turning interesting ideas into useful digital
+                experiences.
               </p>
-
               <p className="muted">
-                I enjoy building useful digital products, learning new
-                technologies and solving real-world problems through code.
-                Currently, I'm developing my skills in the MERN stack,
-                databases and machine learning.
+                I'm Devansh, a Computer Science and Engineering student at JK
+                Lakshmipat University, Jaipur. I'm currently exploring the MERN
+                stack, databases, and machine learning through practical
+                projects and continuous learning.
               </p>
 
               <div className="info-row">
                 <div>
-                  <span>LOCATION</span>
+                  <span>BASED IN</span>
                   <strong>Jaipur, India</strong>
                 </div>
                 <div>
-                  <span>STATUS</span>
-                  <strong>Undergraduate student</strong>
+                  <span>FOCUS</span>
+                  <strong>Web & technology</strong>
                 </div>
               </div>
 
@@ -257,91 +404,72 @@ export default function App() {
                 Let's connect <ArrowUpRight size={16} />
               </a>
             </div>
-          </div>
+          </motion.div>
         </section>
 
         <section className="section" id="skills">
-          <div className="section-heading">
-            <p className="eyebrow">MY TOOLKIT</p>
-            <h2>
-              Skills & <span>technologies.</span>
-            </h2>
-            <p className="muted">
-              Technologies I'm learning and working with.
-            </p>
-          </div>
+          <SectionHeading
+            eyebrow="MY TOOLKIT"
+            title="Tools for"
+            accent="building."
+            description="Technologies I'm learning and putting into practice."
+          />
 
           <div className="skills-grid">
-            {Object.entries(skills).map(([category, items], i) => (
-              <motion.div
+            {skills.map(({ title, icon: Icon, description, items }, index) => (
+              <motion.article
                 className="skill-card"
-                key={category}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                key={title}
+                variants={reveal}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: index * 0.12 }}
+                whileHover={{ y: -5 }}
               >
-                <div className="skill-icon">
-                  {i === 0 ? (
-                    <Code2 />
-                  ) : i === 1 ? (
-                    <Database />
-                  ) : (
-                    <Terminal />
-                  )}
-                </div>
-
-                <h3>{category}</h3>
-
-                {items.map((item, j) => (
-                  <div className="skill-item" key={item}>
-                    <div className="skill-label">
-                      <span>{item}</span>
-                      <span>
-                        {["Learning", "Practising", "Exploring"][j % 3]}
-                      </span>
-                    </div>
-
-                    <div className="skill-track">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{
-                          width: `${65 + (j % 3) * 10}%`
-                        }}
-                        transition={{ duration: 0.7 }}
-                        viewport={{ once: true }}
-                      />
-                    </div>
+                <div className="skill-card-top">
+                  <div className="skill-icon">
+                    <Icon size={21} />
                   </div>
-                ))}
-              </motion.div>
+                  <span className="card-index">0{index + 1}</span>
+                </div>
+                <h3>{title}</h3>
+                <p className="muted">{description}</p>
+                <div className="skill-tags">
+                  {items.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+              </motion.article>
             ))}
           </div>
         </section>
 
         <section className="section projects-section" id="projects">
-          <div className="section-heading">
-            <p className="eyebrow">SELECTED WORK</p>
-            <h2>
-              Projects I've <span>worked on.</span>
-            </h2>
-            <p className="muted">
-              A selection of academic and personal projects.
-            </p>
-          </div>
+          <SectionHeading
+            eyebrow="SELECTED WORK"
+            title="A few things"
+            accent="I've built."
+            description="Academic and personal projects exploring practical problems."
+          />
 
           <div className="projects-grid">
-            {projects.map((project, i) => (
+            {projects.map((project, index) => (
               <motion.article
                 className="project-card"
                 key={project.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                viewport={{ once: true }}
+                variants={reveal}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.15 }}
+                transition={{ delay: index * 0.12 }}
+                whileHover={{ y: -7 }}
               >
                 <div className="project-top">
-                  <span>0{i + 1}</span>
-                  <Code2 size={22} />
+                  <span className="project-number">{project.number}</span>
+                  <div className="project-symbol">
+                    <Layers3 size={21} />
+                  </div>
                 </div>
 
                 <p className="eyebrow">{project.category}</p>
@@ -360,7 +488,7 @@ export default function App() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  GitHub <ArrowUpRight size={16} />
+                  View on GitHub <ArrowUpRight size={16} />
                 </a>
               </motion.article>
             ))}
@@ -368,68 +496,102 @@ export default function App() {
         </section>
 
         <section className="section" id="education">
-          <div className="section-heading">
-            <p className="eyebrow">MY JOURNEY</p>
-            <h2>
-              Education & <span>milestones.</span>
-            </h2>
-          </div>
+          <SectionHeading
+            eyebrow="MY JOURNEY"
+            title="Learning by"
+            accent="building."
+            description="My current academic journey and areas of exploration."
+          />
 
           <div className="timeline">
-            <div className="timeline-item">
+            <motion.article
+              className="timeline-item"
+              variants={reveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               <span className="timeline-dot" />
-              <p className="eyebrow">CURRENT</p>
+              <div className="timeline-item-heading">
+                <div className="timeline-icon">
+                  <GraduationCap size={20} />
+                </div>
+                <span className="timeline-date">CURRENT</span>
+              </div>
               <h3>B.Tech — Computer Science & Engineering</h3>
-              <p className="muted">
-                JK Lakshmipat University, Jaipur
+              <p className="muted">JK Lakshmipat University, Jaipur</p>
+              <p className="timeline-detail">
+                Exploring software development, databases, and machine
+                learning through coursework and projects.
               </p>
-              <span className="timeline-date">
-                Undergraduate studies
-              </span>
-            </div>
+            </motion.article>
 
-            <div className="timeline-item">
+            <motion.article
+              className="timeline-item"
+              variants={reveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               <span className="timeline-dot" />
-              <p className="eyebrow">PROJECT EXPERIENCE</p>
-              <h3>Academic & Personal Projects</h3>
+              <div className="timeline-item-heading">
+                <div className="timeline-icon">
+                  <Sparkles size={20} />
+                </div>
+                <span className="timeline-date">ONGOING</span>
+              </div>
+              <h3>Academic & personal projects</h3>
               <p className="muted">
-                Building projects in web development, databases and machine
-                learning.
+                Web development · Databases · Machine learning
               </p>
-            </div>
+              <p className="timeline-detail">
+                Learning by creating practical applications and improving
+                development skills step by step.
+              </p>
+            </motion.article>
           </div>
-
-          <p className="muted">
-            Add your verified certifications, courses and achievements here
-            before submission.
-          </p>
         </section>
 
         <section className="section contact-section" id="contact">
-          <div className="section-heading">
-            <p className="eyebrow">GET IN TOUCH</p>
-            <h2>
-              Have an idea? <span>Let's talk.</span>
-            </h2>
-            <p className="muted">
-              Send me a message using the form below.
-            </p>
-          </div>
+          <SectionHeading
+            eyebrow="GET IN TOUCH"
+            title="Have something"
+            accent="in mind?"
+            description="Have a project idea, question, or just want to connect? Send a message."
+          />
 
           <div className="contact-grid">
-            <div className="contact-note">
-              <Mail size={28} />
-              <h3>Let's build something useful.</h3>
+            <motion.div
+              className="contact-note"
+              variants={reveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <div className="contact-icon">
+                <Mail size={23} />
+              </div>
+              <h3>Let's make it happen.</h3>
               <p className="muted">
-                Open to connecting with people, discussing ideas and
-                exploring opportunities.
+                I'm always happy to connect, exchange ideas, and explore
+                interesting projects.
               </p>
-              <p className="muted">Jaipur, India</p>
-            </div>
 
-            <form className="contact-form" onSubmit={submitContact}>
+              <a href="mailto:" className="contact-direct">
+                Say hello <ArrowUpRight size={16} />
+              </a>
+            </motion.div>
+
+            <motion.form
+              className="contact-form"
+              onSubmit={submitContact}
+              variants={reveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
               <label>
-                Name
+                Your name
                 <input
                   required
                   minLength={2}
@@ -437,12 +599,12 @@ export default function App() {
                   onChange={(e) =>
                     setForm({ ...form, name: e.target.value })
                   }
-                  placeholder="Your name"
+                  placeholder="What should I call you?"
                 />
               </label>
 
               <label>
-                Email
+                Email address
                 <input
                   required
                   type="email"
@@ -455,7 +617,7 @@ export default function App() {
               </label>
 
               <label>
-                Message
+                Your message
                 <textarea
                   required
                   minLength={5}
@@ -464,12 +626,13 @@ export default function App() {
                   onChange={(e) =>
                     setForm({ ...form, message: e.target.value })
                   }
-                  placeholder="Tell me about your idea..."
+                  placeholder="Tell me what you're thinking..."
                 />
               </label>
 
-              <button className="primary-btn" type="submit">
-                Send message <ArrowUpRight size={17} />
+              <button className="primary-btn" type="submit" disabled={sending}>
+                {sending ? "Sending..." : "Send message"}
+                <Send size={16} />
               </button>
 
               {status && (
@@ -477,18 +640,16 @@ export default function App() {
                   {status}
                 </p>
               )}
-            </form>
+            </motion.form>
           </div>
         </section>
       </main>
 
       <footer className="footer">
         <a className="brand" href="#home">
-          DS<span>.</span>
+          d<span>.</span>
         </a>
-
         <p>Designed & built by Devansh Srivastava.</p>
-
         <div className="footer-downloads">
           <a href="http://localhost:5001/api/resume/pdf">
             <Download size={15} /> Resume PDF
@@ -497,8 +658,9 @@ export default function App() {
             <Download size={15} /> Resume DOCX
           </a>
         </div>
-
-        <a href="#home">Back to top ↑</a>
+        <a className="back-to-top" href="#home">
+          Back to top ↑
+        </a>
       </footer>
     </div>
   );
