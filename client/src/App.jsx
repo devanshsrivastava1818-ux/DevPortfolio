@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -15,6 +14,8 @@ import {
   GitBranch,
   Sparkles,
   GraduationCap,
+  Award,
+  ExternalLink,
   Layers3,
   Send,
 } from "lucide-react";
@@ -24,30 +25,30 @@ import devAvatar from "./assets/dev-avatar.png";
 const projects = [
   {
     number: "01",
-    title: "PhishScan",
-    category: "MACHINE LEARNING",
+    title: "Anytime Invest",
+    category: "FINANCIAL ANALYTICS",
     description:
-      "An ML-powered phishing URL detection system that classifies suspicious links and presents risk scores.",
-    tech: ["Python", "Scikit-learn", "Flask"],
-    link: "https://github.com/",
+      "A full-stack wealth analytics platform for client portfolio lookup and downloadable PDF reporting, powered by Databricks SQL Warehouse.",
+    tech: ["Node.js", "Express.js", "Databricks", "PDFKit"],
+    link: "https://github.com/devanshsrivastava1818-ux/anytime-invest",
   },
   {
     number: "02",
-    title: "SchemeAssist",
-    category: "AI / WEB DEVELOPMENT",
-    description:
-      "A government scheme discovery concept designed to help people explore schemes relevant to their needs.",
-    tech: ["React", "JavaScript", "AI"],
-    link: "https://github.com/",
-  },
-  {
-    number: "03",
     title: "Smart Ride Sharing",
     category: "DATABASE SYSTEMS",
     description:
       "A database-driven transportation management system for coordinating shared rides and organizing records.",
     tech: ["SQL", "DBMS", "Database Design"],
-    link: "https://github.com/",
+    link: "https://github.com/devanshsrivastava1818-ux/Smart-Ride-Sharing-DBMS-",
+  },
+  {
+    number: "03",
+    title: "Dark Patterns Detection",
+    category: "NLP & MACHINE LEARNING",
+    description:
+      "An NLP-powered system that detects manipulative e-commerce UI/UX patterns using TF-IDF and compares Logistic Regression, SVM, and Random Forest, achieving a best ROC-AUC score of 0.9793.",
+    tech: ["Python", "NLP", "TF-IDF", "Random Forest"],
+    link: "https://github.com/Devanshpundir-code/College_machine_learning_project",
   },
 ];
 
@@ -72,11 +73,36 @@ const skills = [
   },
 ];
 
+const certifications = [
+  {
+    title: "Red Hat System Administration I (RH124 - RHA) - Ver. 10",
+    issuer: "Red Hat",
+    issued: "April 2026",
+    credential: "Credly credential",
+    link: "https://www.credly.com/badges/dcc8e27d-6581-4d1b-a40e-d3fa8360a7d3",
+  },
+  {
+    title: "Database Management System",
+    issuer: "Infosys",
+    issued: "November 2025",
+    credential: "Course completion certificate",
+    link: "https://www.linkedin.com/in/devansh-srivastava-vk18/overlay/Certifications/1438757069/treasury/?profileId=ACoAAFPME1kBXMsq_qwtS4pEYn8E7bnvAFrxR2E",
+  },
+  {
+    title: "Data Structures and Algorithms in C",
+    issuer: "Udemy",
+    issued: "December 2025",
+    credential: "Credential ID: UC-de809488-4493-4e8d-9163-082dc3b032ce",
+    link: "https://www.udemy.com/certificate/UC-de809488-4493-4e8d-9163-082dc3b032ce/",
+  },
+];
+
 const navigation = [
   ["About", "#about"],
   ["Skills", "#skills"],
   ["Projects", "#projects"],
   ["Education", "#education"],
+  ["Certifications", "#certifications"],
   ["Contact", "#contact"],
 ];
 
@@ -105,6 +131,43 @@ function SectionHeading({ eyebrow, title, accent, description }) {
       {description && <p className="muted">{description}</p>}
     </motion.div>
   );
+}
+
+function CursorGlow() {
+  const cursorRef = useRef(null);
+
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    if (!cursor) return;
+
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (!finePointer.matches || reducedMotion.matches) return;
+
+    const moveCursor = (event) => {
+      cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
+      cursor.classList.add("is-visible");
+
+      if (event.target.closest("a, button, .project-card, input, textarea")) {
+        cursor.classList.add("is-interactive");
+      } else {
+        cursor.classList.remove("is-interactive");
+      }
+    };
+
+    const hideCursor = () => cursor.classList.remove("is-visible", "is-interactive");
+
+    document.addEventListener("pointermove", moveCursor, { passive: true });
+    document.addEventListener("pointerleave", hideCursor);
+
+    return () => {
+      document.removeEventListener("pointermove", moveCursor);
+      document.removeEventListener("pointerleave", hideCursor);
+    };
+  }, []);
+
+  return <span ref={cursorRef} className="cursor-glow" aria-hidden="true" />;
 }
 
 export default function App() {
@@ -154,6 +217,7 @@ export default function App() {
 
   return (
     <div className={dark ? "site dark" : "site light"}>
+      <CursorGlow />
       <header className="navbar">
         <a className="brand" href="#home" aria-label="Devansh home">
           d<span>.</span>
@@ -197,9 +261,9 @@ export default function App() {
           <div className="hero-copy">
             <motion.div
               className="availability"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
             >
               <span className="availability-dot" />
               COMPUTER SCIENCE STUDENT
@@ -207,17 +271,17 @@ export default function App() {
 
             <motion.p
               className="eyebrow hero-eyebrow"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              initial={{ opacity: 0, y: 10, filter: "blur(5px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.65, delay: 0.16, ease: [0.22, 1, 0.36, 1] }}
             >
               HELLO, I'M DEVANSH
             </motion.p>
 
             <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.75, delay: 0.1 }}
+              initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.9, delay: 0.22, ease: [0.22, 1, 0.36, 1] }}
             >
               Ideas into
               <br />
@@ -225,18 +289,18 @@ export default function App() {
             </motion.h1>
 
             <motion.h2
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
+              initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.75, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
             >
               I'm Devansh Srivastava.
             </motion.h2>
 
             <motion.p
               className="hero-description"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.7, delay: 0.35 }}
+              initial={{ opacity: 0, y: 12, filter: "blur(5px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.75, delay: 0.48, ease: [0.22, 1, 0.36, 1] }}
             >
               A CSE student at JK Lakshmipat University, exploring web
               development, machine learning, and useful solutions to real-world
@@ -245,9 +309,9 @@ export default function App() {
 
             <motion.div
               className="hero-buttons"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45 }}
+              initial={{ opacity: 0, y: 16, filter: "blur(5px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.7, delay: 0.62, ease: [0.22, 1, 0.36, 1] }}
             >
               <a href="#projects" className="primary-btn">
                 Explore my work <ArrowUpRight size={17} />
@@ -259,9 +323,9 @@ export default function App() {
 
             <motion.div
               className="socials"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.78, ease: [0.22, 1, 0.36, 1] }}
             >
               <a
                 href="https://github.com/"
@@ -272,24 +336,42 @@ export default function App() {
                 <GitBranch size={19} />
               </a>
               <a
-                href="https://linkedin.com/"
+                href="https://www.linkedin.com/in/devansh-srivastava-vk18/"
                 target="_blank"
-                rel="noreferrer"
-                aria-label="LinkedIn"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn Profile"
+                title="LinkedIn"
               >
-                <Code2 size={19} />
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.26 2.37 4.26 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z" />
+                </svg>
               </a>
               <a href="#contact" aria-label="Contact">
                 <Mail size={19} />
+              </a>
+              <a
+                href={`${import.meta.env.VITE_API_URL || "http://localhost:5001"}/api/resume/pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Resume PDF"
+                title="Resume PDF"
+              >
+                <Download size={19} />
               </a>
             </motion.div>
           </div>
 
           <motion.div
             className="hero-visual"
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.2 }}
+            initial={{ opacity: 0, scale: 0.92, y: 14, filter: "blur(7px)" }}
+            animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 1.05, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="visual-grid" />
             <motion.div
@@ -463,7 +545,20 @@ export default function App() {
                 whileInView="visible"
                 viewport={{ once: true, amount: 0.15 }}
                 transition={{ delay: index * 0.12 }}
-                whileHover={{ y: -7 }}
+                onMouseMove={(event) => {
+                  const card = event.currentTarget;
+                  const rect = card.getBoundingClientRect();
+
+                  const x = (event.clientX - rect.left) / rect.width;
+                  const y = (event.clientY - rect.top) / rect.height;
+
+                  card.style.setProperty("--tilt-x", `${(0.5 - y) * 6}deg`);
+                  card.style.setProperty("--tilt-y", `${(x - 0.5) * 8}deg`);
+                }}
+                onMouseLeave={(event) => {
+                  event.currentTarget.style.setProperty("--tilt-x", "0deg");
+                  event.currentTarget.style.setProperty("--tilt-y", "0deg");
+                }}
               >
                 <div className="project-top">
                   <span className="project-number">{project.number}</span>
@@ -483,17 +578,21 @@ export default function App() {
                 </div>
 
                 <a
-                  className="project-link"
+                  className={`project-link ${project.link === "#" ? "project-link-disabled" : ""}`}
                   href={project.link}
-                  target="_blank"
-                  rel="noreferrer"
+                  target={project.link.startsWith("http") ? "_blank" : undefined}
+                  rel={project.link.startsWith("http") ? "noreferrer" : undefined}
+                  onClick={project.link === "#" ? (event) => event.preventDefault() : undefined}
+                  aria-disabled={project.link === "#" ? "true" : undefined}
+                  title={project.link === "#" ? "GitHub repository link will be added when available" : undefined}
                 >
-                  View on GitHub <ArrowUpRight size={16} />
+                  {project.link.startsWith("http") ? "View on GitHub" : "GitHub link coming soon"} <ArrowUpRight size={16} />
                 </a>
               </motion.article>
             ))}
           </div>
         </section>
+
 
         <section className="section" id="education">
           <SectionHeading
@@ -549,6 +648,44 @@ export default function App() {
                 development skills step by step.
               </p>
             </motion.article>
+          </div>
+        </section>
+
+        <section className="section certifications-section" id="certifications">
+          <SectionHeading
+            eyebrow="CONTINUOUS LEARNING"
+            title="Certificates &"
+            accent="credentials."
+            description="Courses and credentials supporting my journey in systems, databases, and programming."
+          />
+
+          <div className="certifications-grid">
+            {certifications.map((certificate, index) => (
+              <motion.article
+                className="certification-card"
+                key={certificate.title}
+                variants={reveal}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+              >
+                <div className="certification-top">
+                  <div className="certification-icon"><Award size={21} /></div>
+                  <span className="card-index">0{index + 1}</span>
+                </div>
+                <p className="eyebrow">{certificate.issuer}</p>
+                <h3>{certificate.title}</h3>
+                <p className="muted">Issued {certificate.issued}</p>
+                <p className="certification-credential">{certificate.credential}</p>
+                {certificate.link && (
+                  <a className="certification-link" href={certificate.link} target="_blank" rel="noopener noreferrer">
+                    View credential <ExternalLink size={15} />
+                  </a>
+                )}
+              </motion.article>
+            ))}
           </div>
         </section>
 
@@ -651,11 +788,22 @@ export default function App() {
         </a>
         <p>Designed & built by Devansh Srivastava.</p>
         <div className="footer-downloads">
-          <a href="http://localhost:5001/api/resume/pdf">
-            <Download size={15} /> Resume PDF
-          </a>
-          <a href="http://localhost:5001/api/resume/docx">
-            <Download size={15} /> Resume DOCX
+          <a
+            href="https://www.linkedin.com/in/devansh-srivastava-vk18/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit my LinkedIn profile"
+          >
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.26 2.37 4.26 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0Z" />
+            </svg>
+            LinkedIn Profile
           </a>
         </div>
         <a className="back-to-top" href="#home">
