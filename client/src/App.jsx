@@ -805,6 +805,24 @@ export default function App() {
             </svg>
             LinkedIn Profile
           </a>
+          <a
+            href={`${import.meta.env.VITE_API_URL || "http://localhost:5001"}/api/resume/pdf`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Download PDF resume"
+          >
+            <Download size={15} />
+            Download PDF Resume
+          </a>
+          <a
+            href={`${import.meta.env.VITE_API_URL || "http://localhost:5001"}/api/resume/docx`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Download Word resume"
+          >
+            <Download size={15} />
+            Download Word Resume
+          </a>
         </div>
         <a className="back-to-top" href="#home">
           Back to top ↑
