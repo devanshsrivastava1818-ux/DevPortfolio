@@ -10,13 +10,17 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "https://dev-portfolio-teal-kappa.vercel.app"
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175"
-  ]
+  origin: allowedOrigins
 }));
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
@@ -32,7 +36,10 @@ const Contact = mongoose.model("Contact", contactSchema);
 
 // Health check
 app.get("/api/health", (req, res) => {
-  res.json({ success: true, message: "Portfolio API is running!" });
+  res.json({
+    success: true,
+    message: "Portfolio API is running!"
+  });
 });
 
 // Save contact messages
@@ -55,6 +62,7 @@ app.post("/api/contact", async (req, res) => {
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!emailPattern.test(email.trim())) {
       return res.status(400).json({
         success: false,
@@ -75,6 +83,7 @@ app.post("/api/contact", async (req, res) => {
     });
   } catch (error) {
     console.error("Contact error:", error.message);
+
     res.status(500).json({
       success: false,
       message: "Unable to save your message."
@@ -129,7 +138,9 @@ async function startServer() {
       process.exit(1);
     }
   } else {
-    console.warn("MONGODB_URI not configured. Contact API will not save messages.");
+    console.warn(
+      "MONGODB_URI not configured. Contact API will not save messages."
+    );
   }
 
   app.listen(PORT, () => {
